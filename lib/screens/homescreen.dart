@@ -1,9 +1,12 @@
+import 'package:book_store/Controler/cart_controller.dart';
 import 'package:book_store/screens/feedback.dart';
 import 'package:book_store/screens/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:book_store/theme/theme.dart';
 import 'package:book_store/Auth/login.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:book_store/screens/cart_page.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -44,21 +47,25 @@ class _HomeScreenState extends State<HomeScreen> {
         shadowColor: Colors.black26,
         actions: [
           IconButton(
-            icon: const Icon(Icons.search),
+            icon: const Icon(Icons.search, color: Colors.white),
             onPressed: () {
               showSearch(context: context, delegate: BookSearchDelegate());
             },
           ),
+
+          /// CART BUTTON
           IconButton(
-            icon: const Icon(Icons.shopping_cart_outlined),
+            icon: const Icon(Icons.shopping_cart, color: Colors.white),
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Cart feature coming soon!")),
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CartPage()),
               );
             },
           ),
         ],
       ),
+
       drawer: Drawer(
         child: Container(
           color: MyTheme.backgroundColor,
@@ -97,6 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
+
               ListTile(
                 leading: const Icon(Icons.home),
                 title: const Text('Home'),
@@ -105,6 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.pop(context);
                 },
               ),
+
               ListTile(
                 leading: const Icon(Icons.category),
                 title: const Text('Categories'),
@@ -113,6 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.pop(context);
                 },
               ),
+
               ListTile(
                 leading: const Icon(Icons.feedback),
                 title: const Text('Feedback'),
@@ -123,7 +133,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 },
               ),
+
               const Divider(),
+
               ListTile(
                 leading: const Icon(Icons.logout),
                 title: const Text('Logout'),
@@ -133,7 +145,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
+
       body: _pages[_selectedIndex],
+
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
@@ -161,14 +175,12 @@ class HomeContent extends StatefulWidget {
 }
 
 class _HomeContentState extends State<HomeContent> {
-  // 🖼️ Online Banner Images
   final List<String> bannerImages = [
     "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=1000",
     "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=1000",
     "https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=1000",
   ];
 
-  // 📚 Online Featured Books
   final List<Map<String, dynamic>> featuredBooks = [
     {
       'title': 'The Alchemist',
@@ -198,20 +210,6 @@ class _HomeContentState extends State<HomeContent> {
           'https://images-na.ssl-images-amazon.com/images/I/81bsw6fnUiL.jpg',
       'rating': 4.7,
     },
-    {
-      'title': 'Think Like a Monk',
-      'price': '\$16',
-      'image':
-          'https://images-na.ssl-images-amazon.com/images/I/81s6DUyQCZL.jpg',
-      'rating': 4.9,
-    },
-    {
-      'title': 'The Power of Now',
-      'price': '\$13',
-      'image':
-          'https://images-na.ssl-images-amazon.com/images/I/61VYB+pKq2L.jpg',
-      'rating': 4.4,
-    },
   ];
 
   final List<Map<String, dynamic>> categories = [
@@ -224,312 +222,189 @@ class _HomeContentState extends State<HomeContent> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 🔹 Carousel Banner
-            CarouselSlider(
-              options: CarouselOptions(
-                height: 200,
-                autoPlay: true,
-                enlargeCenterPage: true,
-                aspectRatio: 16 / 9,
-                viewportFraction: 0.9,
-              ),
-              items: bannerImages.map((image) {
-                return Builder(
-                  builder: (BuildContext context) {
-                    return Container(
-                      width: MediaQuery.of(context).size.width,
-                      margin: const EdgeInsets.symmetric(horizontal: 5.0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        image: DecorationImage(
-                          image: NetworkImage(image),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      child: Align(
-                        alignment: Alignment.bottomLeft,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text("Shop Now!")),
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: MyTheme.primaryColor,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                            ),
-                            child: const Text('Shop Now'),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                );
-              }).toList(),
+    final cart = Provider.of<CartController>(context, listen: false);
+
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// 🔹 CAROUSEL
+          CarouselSlider(
+            options: CarouselOptions(
+              height: 200,
+              autoPlay: true,
+              enlargeCenterPage: true,
             ),
-
-            const SizedBox(height: 20),
-
-            // 🌟 Stylish Shop by Category Section
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                'Shop by Category',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: MyTheme.textColor,
+            items: bannerImages.map((image) {
+              return Container(
+                margin: const EdgeInsets.symmetric(horizontal: 5),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  image: DecorationImage(
+                    image: NetworkImage(image),
+                    fit: BoxFit.cover,
+                  ),
                 ),
+              );
+            }).toList(),
+          ),
+
+          const SizedBox(height: 20),
+
+          /// CATEGORY SECTION
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              "Shop by Category",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: MyTheme.textColor,
               ),
             ),
-            const SizedBox(height: 10),
+          ),
 
-            SizedBox(
-              height: 120,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: categories.length,
-                itemBuilder: (context, index) {
-                  final category = categories[index];
-                  return GestureDetector(
-                    onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text("Opening ${category['name']} category"),
-                        ),
-                      );
-                    },
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      width: 90,
-                      margin: const EdgeInsets.only(right: 14),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            MyTheme.primaryColor.withOpacity(0.15),
-                            MyTheme.accentColor.withOpacity(0.15),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 4,
-                            offset: const Offset(2, 2),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: MyTheme.primaryColor.withOpacity(0.1),
-                              shape: BoxShape.circle,
-                            ),
-                            child: IconButton(
-                              onPressed: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      "Viewing ${category['name']}",
-                                    ),
-                                  ),
-                                );
-                              },
-                              icon: Icon(
-                                category['icon'],
-                                size: 28,
-                                color: MyTheme.primaryColor,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            category['name'],
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 13,
-                              color: MyTheme.textColor,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
+          const SizedBox(height: 10),
 
-            const SizedBox(height: 20),
-
-            // 🔹 Featured Books Section
-            Padding(
+          SizedBox(
+            height: 120,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Featured Books',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: MyTheme.textColor,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("View All Books")),
-                      );
-                    },
-                    child: Text(
-                      'View All',
-                      style: TextStyle(color: MyTheme.primaryColor),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 10),
-
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                childAspectRatio: 0.75,
-              ),
-              itemCount: featuredBooks.length,
+              itemCount: categories.length,
               itemBuilder: (context, index) {
-                final book = featuredBooks[index];
-                return GestureDetector(
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Viewing ${book['title']}")),
-                    );
-                  },
-                  child: Card(
-                    elevation: 6,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    shadowColor: Colors.black26,
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: ClipRRect(
-                            borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(15),
-                            ),
-                            child: Image.network(
-                              book['image'],
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: Column(
-                            children: [
-                              Text(
-                                book['title'],
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                ),
-                                textAlign: TextAlign.center,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const SizedBox(height: 5),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Icon(
-                                    Icons.star,
-                                    color: Colors.amber,
-                                    size: 16,
-                                  ),
-                                  Text(
-                                    '${book['rating']}',
-                                    style: const TextStyle(fontSize: 12),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 5),
-                              Text(
-                                book['price'],
-                                style: TextStyle(
-                                  color: MyTheme.primaryColor,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 5),
-                              ElevatedButton.icon(
-                                onPressed: () {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        "${book['title']} added to cart!",
-                                      ),
-                                    ),
-                                  );
-                                },
-                                icon: const Icon(
-                                  Icons.add_shopping_cart,
-                                  size: 16,
-                                ),
-                                label: const Text('Add to Cart'),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: MyTheme.primaryColor,
-                                  foregroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 5,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                final category = categories[index];
+                return Container(
+                  width: 90,
+                  margin: const EdgeInsets.only(right: 14),
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    gradient: LinearGradient(
+                      colors: [
+                        MyTheme.primaryColor.withOpacity(0.15),
+                        MyTheme.accentColor.withOpacity(0.15),
                       ],
                     ),
+                  ),
+                  child: Column(
+                    children: [
+                      Icon(
+                        category['icon'],
+                        size: 30,
+                        color: MyTheme.primaryColor,
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        category['name'],
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                    ],
                   ),
                 );
               },
             ),
-            const SizedBox(height: 20),
-          ],
-        ),
+          ),
+
+          const SizedBox(height: 20),
+
+          /// 🔹 FEATURED BOOKS
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              "Featured Books",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: MyTheme.textColor,
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 10),
+
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: featuredBooks.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              childAspectRatio: 0.72,
+            ),
+            itemBuilder: (context, index) {
+              final book = featuredBooks[index];
+
+              return Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(15),
+                        ),
+                        child: Image.network(book['image'], fit: BoxFit.cover),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Column(
+                        children: [
+                          Text(
+                            book['title'],
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            book['price'],
+                            style: TextStyle(
+                              color: MyTheme.primaryColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+
+                          /// ADD TO CART BUTTON
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              cart.addToCart(book);
+
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    "${book['title']} added to cart",
+                                  ),
+                                ),
+                              );
+                            },
+                            icon: const Icon(Icons.add_shopping_cart, size: 16),
+                            label: const Text("Add to Cart"),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+
+          const SizedBox(height: 20),
+        ],
       ),
     );
   }
 }
 
-// 🔍 Search Delegate
 class BookSearchDelegate extends SearchDelegate {
   final List<String> books = [
     "The Alchemist",
@@ -556,12 +431,11 @@ class BookSearchDelegate extends SearchDelegate {
     final results = books
         .where((book) => book.toLowerCase().contains(query.toLowerCase()))
         .toList();
+
     return ListView.builder(
       itemCount: results.length,
-      itemBuilder: (context, index) => ListTile(
-        title: Text(results[index]),
-        leading: const Icon(Icons.book),
-      ),
+      itemBuilder: (_, i) =>
+          ListTile(title: Text(results[i]), leading: const Icon(Icons.book)),
     );
   }
 
@@ -570,12 +444,13 @@ class BookSearchDelegate extends SearchDelegate {
     final suggestions = books
         .where((book) => book.toLowerCase().contains(query.toLowerCase()))
         .toList();
+
     return ListView.builder(
       itemCount: suggestions.length,
-      itemBuilder: (context, index) => ListTile(
-        title: Text(suggestions[index]),
+      itemBuilder: (_, i) => ListTile(
+        title: Text(suggestions[i]),
         onTap: () {
-          query = suggestions[index];
+          query = suggestions[i];
           showResults(context);
         },
       ),
@@ -583,7 +458,6 @@ class BookSearchDelegate extends SearchDelegate {
   }
 }
 
-// 🔸 Categories Page
 class CategoriesPage extends StatelessWidget {
   const CategoriesPage({super.key});
 
@@ -615,51 +489,33 @@ class CategoriesPage extends StatelessWidget {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Browse Categories',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: MyTheme.textColor,
+        child: ListView.builder(
+          itemCount: categories.length,
+          itemBuilder: (_, index) {
+            final category = categories[index];
+
+            return ExpansionTile(
+              title: Text(
+                "name",
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
-            ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: ListView.builder(
-                itemCount: categories.length,
-                itemBuilder: (context, index) {
-                  final category = categories[index];
-                  return ExpansionTile(
-                    title: Text(
-                      "name",
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+
+              children: (category['subcategories'] as List<String>)
+                  .map(
+                    (sub) => ListTile(
+                      title: Text(sub),
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Exploring $sub")),
+                        );
+                      },
                     ),
-                    children: (category['subcategories'] as List<String>).map((
-                      sub,
-                    ) {
-                      return ListTile(
-                        title: Text(sub),
-                        onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              "Exploring $sub in ${category['name']}",
-                            ),
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  );
-                },
-              ),
-            ),
-          ],
+                  )
+                  .toList(),
+            );
+          },
         ),
       ),
     );
   }
 }
-
-

@@ -17,9 +17,21 @@ class HomeContent extends StatelessWidget {
     ];
 
     final List<Map<String, String>> discountBooks = [
-      {"title": "The Power of Now", "discount": "20%", "image": "lib/assets/book1.jpg"},
-      {"title": "Think Like a Monk", "discount": "30%", "image": "lib/assets/book2.png"},
-      {"title": "The Subtle Art of Not Giving a F*ck", "discount": "25%", "image": "lib/assets/book3.png"},
+      {
+        "title": "The Power of Now",
+        "discount": "20%",
+        "image": "lib/assets/book1.jpg",
+      },
+      {
+        "title": "Think Like a Monk",
+        "discount": "30%",
+        "image": "lib/assets/book2.png",
+      },
+      {
+        "title": "The Subtle Art of Not Giving a F*ck",
+        "discount": "25%",
+        "image": "lib/assets/book3.png",
+      },
     ];
 
     final books = [
@@ -29,116 +41,129 @@ class HomeContent extends StatelessWidget {
       {"title": "Rich Dad Poor Dad", "image": "lib/assets/book4.png"},
     ];
 
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          const SizedBox(height: 12),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: CarouselSlider(
-                options: CarouselOptions(
-                  height: 200,
-                  autoPlay: true,
-                  enlargeCenterPage: true,
-                  viewportFraction: 0.9,
-                  autoPlayInterval: const Duration(seconds: 3),
+    return Scaffold(
+      appBar: AppBar(title: const Text("Book Store"), actions: [
+          
+        ],
+      ),
+
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: CarouselSlider(
+                  options: CarouselOptions(
+                    height: 200,
+                    autoPlay: true,
+                    enlargeCenterPage: true,
+                    viewportFraction: 0.9,
+                    autoPlayInterval: const Duration(seconds: 3),
+                  ),
+                  items: sliderImages.map((imgPath) {
+                    return Image.asset(
+                      imgPath,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                    );
+                  }).toList(),
                 ),
-                items: sliderImages.map((imgPath) {
-                  return Image.asset(imgPath, fit: BoxFit.cover, width: double.infinity);
-                }).toList(),
               ),
             ),
-          ),
-          const SizedBox(height: 24),
+            const SizedBox(height: 24),
 
-          // 💸 Discounted Books Section (Animated)
-          Container(
-            width: double.infinity,
-            color: MyTheme.backgroundColor.withOpacity(0.1),
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "🔥 Discounted Books",
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: MyTheme.textColor,
+            // 💸 Discounted Books Section
+            Container(
+              width: double.infinity,
+              color: MyTheme.backgroundColor.withOpacity(0.1),
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "🔥 Discounted Books",
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: MyTheme.textColor,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  height: 230,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: discountBooks.length,
-                    itemBuilder: (context, index) {
-                      return _AnimatedDiscountCard(
-                        title: discountBooks[index]["title"]!,
-                        discount: discountBooks[index]["discount"]!,
-                        image: discountBooks[index]["image"]!,
-                      );
-                    },
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    height: 230,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: discountBooks.length,
+                      itemBuilder: (context, index) {
+                        return _AnimatedDiscountCard(
+                          title: discountBooks[index]["title"]!,
+                          discount: discountBooks[index]["discount"]!,
+                          image: discountBooks[index]["image"]!,
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 24),
-
-          // 📚 Book Collection Grid
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: GridView.builder(
-              itemCount: books.length,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.75,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
+                ],
               ),
-              itemBuilder: (context, index) {
-                return Card(
-                  color: MyTheme.accentColor.withOpacity(0.2),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16)),
-                  elevation: 4,
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: ClipRRect(
-                          borderRadius: const BorderRadius.only(
+            ),
+
+            const SizedBox(height: 24),
+
+            // 📚 Book Collection Grid
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: GridView.builder(
+                itemCount: books.length,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  childAspectRatio: 0.75,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                ),
+                itemBuilder: (context, index) {
+                  return Card(
+                    color: MyTheme.accentColor.withOpacity(0.2),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    elevation: 4,
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: ClipRRect(
+                            borderRadius: const BorderRadius.only(
                               topLeft: Radius.circular(16),
-                              topRight: Radius.circular(16)),
-                          child: Image.asset(
-                            books[index]["image"]!,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
+                              topRight: Radius.circular(16),
+                            ),
+                            child: Image.asset(
+                              books[index]["image"]!,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        books[index]["title"]!,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: MyTheme.textColor,
+                        const SizedBox(height: 8),
+                        Text(
+                          books[index]["title"]!,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: MyTheme.textColor,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                    ],
-                  ),
-                );
-              },
+                        const SizedBox(height: 8),
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -222,6 +247,8 @@ class _AnimatedDiscountCardState extends State<_AnimatedDiscountCard> {
                 ),
               ],
             ),
+
+            // Discount Badge
             Positioned(
               right: 0,
               top: 0,

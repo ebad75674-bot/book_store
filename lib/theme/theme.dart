@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MyTheme {
-  // 🎨 Define color palette (Pro-level for a books app: Sophisticated grays with subtle accents for readability and elegance)
+  // Define color palette (Pro-level for a books app: Sophisticated grays with subtle accents for readability and elegance)
   static const Color primaryColor = Color(
     0xFF37474F,
   ); // Charcoal Gray (professional, bookish depth)
@@ -21,7 +21,7 @@ class MyTheme {
     0xFFB0BEC5,
   ); // Light Gray for dividers
 
-  // 🌟 Main theme data
+  //  Main theme data
   static ThemeData get theme {
     return ThemeData(
       brightness: Brightness.light,
@@ -39,7 +39,7 @@ class MyTheme {
         onSurface: textColor,
       ),
 
-      // 🧭 AppBar Theme (Elevated for a premium feel)
+      // AppBar Theme (Elevated for a premium feel)
       appBarTheme: AppBarTheme(
         backgroundColor: primaryColor,
         elevation: 8, // Increased for depth
@@ -54,7 +54,7 @@ class MyTheme {
         shadowColor: Colors.black.withOpacity(0.2),
       ),
 
-      // 🔘 Elevated Button Theme (Rounded for modern touch)
+      // Elevated Button Theme (Rounded for modern touch)
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryColor,
@@ -75,7 +75,7 @@ class MyTheme {
         ),
       ),
 
-      // 🪶 Text Button Theme (Minimalist)
+      // Text Button Theme (Minimalist)
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: primaryColor,
